@@ -14,7 +14,7 @@ password:String
 
 const BrainSchema = new Schema({
 
-title:String,
+type:String,
 URL:String,
 tag:Array,
 UserId:ObjectId

@@ -4,11 +4,13 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { createBrain, userSignInMiddlware } from "./middlewares/signinMiddleware.js";
 import cookieParser from "cookie-parser";
+import cors from 'cors'
 const SECRET = "SDSDSDSDDS";
 
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors());
 
 app.post("/user/signup", async (req, res) => {
   interface signup {
@@ -62,17 +64,18 @@ app.post("/user/signin", userSignInMiddlware, (req, res) => {
   console.log(token);
 
   res.json({
-    msg: `hello ${UserInfo.username}, you're signed in`,
+
+    UserInfo:UserInfo
   });
 });
 
 app.post("/user/brain",createBrain, async (req, res) => {
   try {
     const URL = req.body.URL;
-    const title = req.body.title;
+    const type = req.body.type;
     const tags = req.body.tags;
    const UserId = req.UserId
-    const brainCreated = await BrainModel.create({ URL, title, tags, UserId });
+    const brainCreated = await BrainModel.create({ URL, type, tags, UserId });
     if (brainCreated) {
       res.json({
         BrainCreated: brainCreated,
@@ -85,6 +88,21 @@ app.post("/user/brain",createBrain, async (req, res) => {
 });
 
 
+app.get('/:UserId/brain',async(req,res)=>{
+
+  const FindByUserId = req.params.UserId
+  const brains = await BrainModel.find({UserId:FindByUserId});
+  console.log(brains)
+   if(brains){
+     res.json({
+        brains:brains
+    })
+
+   }else{
+      res.json({msg:"failed to get brains"})
+   }
+
+})
 
 app.delete('/user/brain',async(req,res)=>{
     const BrainId = req.body.BrainId
@@ -96,14 +114,14 @@ app.delete('/user/brain',async(req,res)=>{
    }else{
     res.json({msg:"failed to delete brain"})
    }
-    
+
 })
 
 app.put('/user/brain',async(req,res)=>{
     const BrainId = req.body.BrainId
-    const title = req.body.title
+    const type = req.body.type
     const URL = req.body.URL
-   const brainUpdated = await BrainModel.updateOne({_id:BrainId},{title:title,URL:URL})
+   const brainUpdated = await BrainModel.updateOne({_id:BrainId},{type:type,URL:URL})
    if(brainUpdated){
     res.json({
         msg:"brain updated"
@@ -111,7 +129,7 @@ app.put('/user/brain',async(req,res)=>{
    }else{
     res.json({msg:"failed to update brain"})
    }
-    
+
 })
 
 app.listen(3000);

@@ -1,6 +1,9 @@
+import axios from "axios";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Plus, Share2,Trash2 } from 'lucide-react';
+import { useEffect } from "react";
+import { AddContentDialog } from "./AddContentDialog";
 
 export const RightPanel = () => {
   const handleClick = () => {
@@ -14,18 +17,21 @@ export const RightPanel = () => {
   const CardDeleteHandler =()=>{
     console.log("card delete clicked")
   }
+
+  const getCards =async()=>{
+    const response = await axios.get("http://localhost:3000/:UserId/brain")
+    console.log(response)
+  }
+  useEffect(()=>{
+    getCards()
+  },[])
   return (
     <div className="py-5 px-10 flex flex-col gap-10 min-h-screen ">
         
       <div className="flex gap-5 w-full justify-between">
         <div className="font-bold text-2xl"><p>All Contents</p></div>
-        <div className="flex gap-5"><Button
-        startIcon={<Plus size={20}/>}
-          variant="primary"
-          size="md"
-          children="Add content"
-          onClick={handleClick}
-        />
+        <div className="flex gap-5">
+          <AddContentDialog/>
         <Button
         startIcon={<Share2 size={20}/>}
           variant="secondary"

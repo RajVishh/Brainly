@@ -1,17 +1,21 @@
-import {RightPanel} from "./components/rightPanel"
-import {NavBar} from "./components/NavBar"
+import {BrowserRouter,Routes,Route} from "react-router-dom"
+import { Brain } from "./app_components/Brain"
+import { LandingPage } from "./app_components/LandingPage"
+import {SignUp} from "./app_components/Signup"
+import { SignIn } from "./app_components/SignIn"
 
 
 function App() {
-
  
   return (
     <>
-    
-    <div className="grid grid-cols-12 bg-[#F7F9FB]">
-      <div className="col-span-2"><NavBar/></div>
-      <div className="col-span-10 w-full"><RightPanel/></div>
-    </div>
+    <BrowserRouter>
+    <Routes><Route path='/' element={<LandingPage/>}/>
+    <Route path='/:userId/brain' element={<Brain/>}/>
+    <Route path='/signup' element={<SignUp/>}/>
+    <Route path='/brain' element={<Brain/>}/>
+    <Route path='/signin' element={<SignIn/>}/>
+    </Routes></BrowserRouter>
      
     </>
   )

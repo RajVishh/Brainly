@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 const buttonVariants = cva("text-center py-1 px-2 rounded-md font-medium cursor-pointer", {
   variants: {
     variant: {
-      primary: "bg-[#4A44DA] text-white hover:bg-black",
+      primary: "bg-[#4A44DA] text-white hover:bg-[#7A77E4] trasnition duration-400",
       secondary: "bg-[#E0E3FF] text-[#4A44DA] hover:bg-black",
     },
     size: {
