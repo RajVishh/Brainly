@@ -4,11 +4,13 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { createBrain, userSignInMiddlware } from "./middlewares/signinMiddleware.js";
 import cookieParser from "cookie-parser";
+import cors from 'cors'
 const SECRET = "SDSDSDSDDS";
 
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors());
 
 app.post("/user/signup", async (req, res) => {
   interface signup {
@@ -62,7 +64,8 @@ app.post("/user/signin", userSignInMiddlware, (req, res) => {
   console.log(token);
 
   res.json({
-    msg: `hello ${UserInfo.username}, you're signed in`,
+
+    UserInfo:UserInfo
   });
 });
 
