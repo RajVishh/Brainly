@@ -5,11 +5,11 @@ import { twMerge } from "tailwind-merge";
 const CardVariants = cva("bg-white rounded-md", {
   variants: {
     variant: {
-      primary: "bg-white rounded-md shadow-md  w-1/4 h-100",
+      primary: "bg-white rounded-md border-[0.5px] border-[#e0e0e0] cursor-pointer hover:shadow-xs  w-1/4 h-100",
       secondary: "",
     },
     size: {
-      md: "h-60 w-1/4  px-4 py-4 text-sm",
+      md: "h-70 w-[250px]  px-4 py-4 text-sm",
       lg: "h-100 w-1/4  px-6 py-6 text-lg",
     },
   },
@@ -21,7 +21,6 @@ const CardVariants = cva("bg-white rounded-md", {
 
 interface CardProps extends VariantProps<typeof CardVariants> {
   title: string;
-  body: string;
   tags: [];
   date: string;
   firstRightIcon?: ReactElement;
@@ -34,7 +33,6 @@ interface CardProps extends VariantProps<typeof CardVariants> {
 export const Card = ({
   title,
   variant,
-  body,
   tags,
   size,
   firstRightIcon,
@@ -51,7 +49,6 @@ export const Card = ({
           <span onClick={onDelete} className="cursor-pointer">{secondRightIcon}</span>
         </div>
       </div>
-      <div className="mt-5">{body}</div>
       <div>{tags}</div>
     </div>
   );

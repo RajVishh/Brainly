@@ -21,6 +21,13 @@ UserId:ObjectId
 
 })
 
+const LinkSchema = new Schema({
+    randomLink:{type:String,unique:true},
+    userId:{type:ObjectId,ref:'users',unique:true}
+
+});
+
+export const LinkModel = mongoose.model('link',LinkSchema)
 export const UserModel = mongoose.model('user',UserSchema)
 export const BrainModel = mongoose.model('brain',BrainSchema)
 

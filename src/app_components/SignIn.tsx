@@ -30,7 +30,7 @@ export const SignIn = ()=>{
                 const UserId = loginUser.data.UserInfo._id
                 console.log("singin Userid ",UserId);
                 const navigateToBrain=()=>{
-                    navigate(`/${UserId}/brain`)
+                    navigate(`/${UserId}/content`)
                 }
                 navigateToBrain();
             }

@@ -1,16 +1,20 @@
 import express from "express";
-import { BrainModel, UserModel } from "./db.js";
+import { BrainModel, UserModel,LinkModel } from "./db.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { createBrain, userSignInMiddlware } from "./middlewares/signinMiddleware.js";
 import cookieParser from "cookie-parser";
-import cors from 'cors'
+import cors from 'cors';
+import {randomHash} from "./utils/randomHash.ts"
 const SECRET = "SDSDSDSDDS";
 
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors());
+app.use( cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }));
 
 app.post("/user/signup", async (req, res) => {
   interface signup {
@@ -36,7 +40,6 @@ app.post("/user/signup", async (req, res) => {
     };
     const userCreated = await UserModel.create(signupInfo);
     if (userCreated) {
-      console.log(userCreated);
       res.json({
         msg: "signed up",
       });
@@ -46,7 +49,6 @@ app.post("/user/signup", async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     res.json({
       error: err,
     });
@@ -54,45 +56,44 @@ app.post("/user/signup", async (req, res) => {
 });
 
 app.post("/user/signin", userSignInMiddlware, (req, res) => {
-  console.log("in signin");
   const UserInfo = req.userInfo;
-  console.log(UserInfo);
   const UserId = UserInfo._id.toString();
-  console.log(UserId);
   const token = jwt.sign(UserId, SECRET);
-  res.cookie("cookie", token);
-  console.log(token);
 
-  res.json({
-
+  try{
+    res.cookie("cookie", token);
+    console.log(token);
+   res.json({
     UserInfo:UserInfo
   });
+
+  }catch(e){
+    console.log(e)
+  }
 });
 
-app.post("/user/brain",createBrain, async (req, res) => {
+app.post("/user/content",createBrain, async (req, res) => {
   try {
-    const URL = req.body.URL;
+    const link = req.body.link;
     const type = req.body.type;
     const tags = req.body.tags;
    const UserId = req.UserId
-    const brainCreated = await BrainModel.create({ URL, type, tags, UserId });
+    const brainCreated = await BrainModel.create({ link, type, tags, UserId });
     if (brainCreated) {
       res.json({
         BrainCreated: brainCreated,
       });
     }
   } catch (err) {
-    console.log(err);
     res.json({ error: err });
   }
 });
 
 
-app.get('/:UserId/brain',async(req,res)=>{
+app.get('/user/:UserId/content',async(req,res)=>{
 
   const FindByUserId = req.params.UserId
   const brains = await BrainModel.find({UserId:FindByUserId});
-  console.log(brains)
    if(brains){
      res.json({
         brains:brains
@@ -131,5 +132,38 @@ app.put('/user/brain',async(req,res)=>{
    }
 
 })
+
+app.post('/user/:UserId/brains/share',userSignInMiddlware,async(req,res)=>{
+ const userId = req.params.UserId;
+  const isSharabel = req.body.isSharabel
+  if(!isSharabel){
+    const linkDeleted = await LinkModel.deleteOne({userId:userId});
+    res.json({msg:"link deleted"})
+  }
+  else if (isSharabel){
+    const randomLink = randomHash(30)
+    const createLink = await LinkModel.create(
+    { randomLink:randomLink, userId:userId },
+  );
+      res.json({
+        msg:"link created"})
+  }
+});
+
+app.get('/share/:randomlink',async(req,res)=>{
+  const randomlink = req.params.randomlink
+    const user = await LinkModel.findOne({randomLink:randomlink})
+    if(!user){
+      res.json({
+      msg:"cannot find the link"})
+    }else{
+    const UserId = user.userId
+    const brains = await BrainModel.find({UserId})
+      res.json({
+      msg:brains})
+    }
+    
+  } 
+);
 
 app.listen(3000);

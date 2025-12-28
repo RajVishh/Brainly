@@ -13,15 +13,11 @@ export const userSignInMiddlware =async (req:Request,res:Response,next:NextFunct
       return res.status(401).json({msg:"email and password required"})
     }
     const User =await UserModel.findOne({email:email});
-    console.log(User)
     if(!User || !User.password){
         return res.status(401).json({msg:"User not found"})
 
     }
-    console.log(password)
-    console.log( User.password)
     const isMatch = await bcrypt.compare(password, User.password)
-    console.log(isMatch)
     
     if (isMatch) {
       (req as any).userInfo = User; 
@@ -42,15 +38,11 @@ export const UserBrainMiddlware =async (req:Request,res:Response,next:NextFuncti
       return res.status(401).json({msg:"email and password required"})
     }
     const User =await UserModel.findOne({email:email});
-    console.log(User)
     if(!User || !User.password){
         return res.status(401).json({msg:"User not found"})
 
     }
-    console.log(password)
-    console.log( User.password)
     const isMatch = await bcrypt.compare(password, User.password)
-    console.log(isMatch)
     
     if (isMatch) {
       (req as any).userInfo = User; 
@@ -65,13 +57,19 @@ export const UserBrainMiddlware =async (req:Request,res:Response,next:NextFuncti
 
 
 
-export const createBrain = (req:Request,res:Response,next:NextFunction)=>{
-     const cookie = req.cookies.cookie;
+export const createBrain = (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.cookies)
+  const token = req.cookies.cookie;
 
-    const UserId = jwt.verify(cookie, SECRET);
-    if (!UserId) {
-      res.json({ msg: "signin first" });
-    }
-    req.UserId = UserId
+  if (!token) {
+    return res.status(401).json({ msg: "Signin first" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET);
+    req.UserId = decoded.userId;
     next();
-}
+  } catch (err) {
+    return res.status(401).json({ msg: "Invalid token" });
+  }
+};

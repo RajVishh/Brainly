@@ -2,10 +2,13 @@ import axios from "axios";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Plus, Share2,Trash2 } from 'lucide-react';
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { AddContentDialog } from "./AddContentDialog";
+import { useParams } from 'react-router-dom';
 
 export const RightPanel = () => {
+  const [card,setCards] = useState<any[]>([]);
+  const { UserId } = useParams();
   const handleClick = () => {
     console.log("button clicked");
   };
@@ -19,12 +22,14 @@ export const RightPanel = () => {
   }
 
   const getCards =async()=>{
-    const response = await axios.get("http://localhost:3000/:UserId/brain")
-    console.log(response)
+    
+    const response = await axios.get(`http://localhost:3000/user/${UserId}/content`)
+    setCards(response.data.brains)
+    console.log("response",response.data.brains)
   }
   useEffect(()=>{
     getCards()
-  },[])
+  },[]) 
   return (
     <div className="py-5 px-10 flex flex-col gap-10 min-h-screen ">
         
@@ -41,17 +46,16 @@ export const RightPanel = () => {
         /></div>
         
       </div>
-      <div>
-        <Card
+      <div className="flex flex-wrap gap-5">
+       {card.map((content) => (<Card
         onShare={CardShareHandler}
         onDelete={CardDeleteHandler}
         firstRightIcon={<Share2 color="gray" size={15}/>}
         secondRightIcon={<Trash2 color="gray" size={15}/>}
-          title="something"
-          body="something something something"
+          title={content.title}
           date="15-12-2025"
-          tags={[]}
-        />
+          tags={content.tag}
+        /> ))}
       </div>
     </div>
   );

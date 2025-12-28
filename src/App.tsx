@@ -11,9 +11,9 @@ function App() {
     <>
     <BrowserRouter>
     <Routes><Route path='/' element={<LandingPage/>}/>
-    <Route path='/:userId/brain' element={<Brain/>}/>
+    <Route path='/:UserId/content' element={<Brain/>}/>
     <Route path='/signup' element={<SignUp/>}/>
-    <Route path='/brain' element={<Brain/>}/>
+    <Route path='/content' element={<Brain/>}/>
     <Route path='/signin' element={<SignIn/>}/>
     </Routes></BrowserRouter>
      

@@ -24,7 +24,7 @@ interface buttonProps extends VariantProps<typeof buttonVariants>{
   children: string;
   startIcon?: ReactElement;
   endIcon?: ReactElement;
-  onClick: () => void;
+  onClick?: () => void;
   className?: string;
 }
 
