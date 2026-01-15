@@ -33,7 +33,7 @@ export const userSignInMiddlware =async (req:Request,res:Response,next:NextFunct
 export const UserBrainMiddlware =async (req:Request,res:Response,next:NextFunction)=>{
 
     try{
-       const { email, password } = req.cookies.cookie;
+       const { email, password } = req.cookies.token;
    if (!email || !password) {
       return res.status(401).json({msg:"email and password required"})
     }
@@ -59,7 +59,7 @@ export const UserBrainMiddlware =async (req:Request,res:Response,next:NextFuncti
 
 export const createBrain = (req: Request, res: Response, next: NextFunction) => {
   console.log(req.cookies)
-  const token = req.cookies.cookie;
+  const token = req.cookies.token;
 
   if (!token) {
     return res.status(401).json({ msg: "Signin first" });

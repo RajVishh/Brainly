@@ -22,8 +22,10 @@ export const SignIn = ()=>{
         try{
             const loginUser = await axios.post("http://localhost:3000/user/signin",{
                 email,password
+            }, {
+                withCredentials: true  // ← ADD THIS!
             })
-            if(!loginUser.data.UserInfo){
+            if(!loginUser.data.UserInfo){   
                 console.log("login failed")
             }else{
                 console.log(loginUser.data.UserInfo._id)

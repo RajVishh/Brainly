@@ -1,17 +1,28 @@
-import axios from "axios";
-import { Button } from "../ui/button";
+
 import { Card } from "../ui/card";
-import { Plus, Share2,Trash2 } from 'lucide-react';
-import { useEffect,useState } from "react";
+import { Share2,Trash2 } from 'lucide-react';
+import { useEffect } from "react";
 import { AddContentDialog } from "./AddContentDialog";
 import { useParams } from 'react-router-dom';
+import { useCardsStore } from "../store/useCardStore.ts";
+import ShareDialog from "./makeShareableLink";
 
-export const RightPanel = () => {
-  const [card,setCards] = useState<any[]>([]);
+
+interface RightPanelProps {
+  Shared?: boolean;
+}
+
+export const RightPanel = ({Shared}: RightPanelProps) => {
+  
   const { UserId } = useParams();
-  const handleClick = () => {
-    console.log("button clicked");
-  };
+  const { randomLink } = useParams();
+  const card = useCardsStore((state) => state.Cards);
+  console.log(card)
+
+
+  const getCards = useCardsStore((state) => state.getCards);
+  const getSharedCards = useCardsStore((state) => state.getSharedCards);
+
 
   const CardShareHandler =()=>{
     console.log("card share clicked")
@@ -20,33 +31,46 @@ export const RightPanel = () => {
   const CardDeleteHandler =()=>{
     console.log("card delete clicked")
   }
-
-  const getCards =async()=>{
-    
-    const response = await axios.get(`http://localhost:3000/user/${UserId}/content`)
-    setCards(response.data.brains)
-    console.log("response",response.data.brains)
-  }
+if(Shared){
   useEffect(()=>{
-    getCards()
+    if (randomLink) {
+      console.log(randomLink)
+      getSharedCards(randomLink)
+    }
   },[]) 
+}else{
+  if (!UserId) return;
+  useEffect(()=>{
+    getCards(UserId)
+  },[]) 
+
+}
+console.log(card)
+  
+
   return (
-    <div className="py-5 px-10 flex flex-col gap-10 min-h-screen ">
-        
-      <div className="flex gap-5 w-full justify-between">
+    <div className="py-5 px-10 flex flex-col gap-10 min-h-screen">
+        {Shared ? (<div className="flex flex-wrap gap-5">
+       {card.map((content) => (<Card
+          title={content.title}
+          date="15-12-2025"
+          tags={content.tag}
+          link={content.link}
+        /> ))}
+      </div>) : (
+        <div>
+          <div className="flex gap-5 justify-between w-full h-[60px] pr-10">
         <div className="font-bold text-2xl"><p>All Contents</p></div>
-        <div className="flex gap-5">
+
+<div className="flex gap-5">
           <AddContentDialog/>
-        <Button
-        startIcon={<Share2 size={20}/>}
-          variant="secondary"
-          size="md"
-          children="Share"
-          onClick={handleClick}
-        /></div>
+        <ShareDialog
+        />
+        </div>
+        </div>
+        <div>
         
-      </div>
-      <div className="flex flex-wrap gap-5">
+         <div className="flex flex-wrap gap-5">
        {card.map((content) => (<Card
         onShare={CardShareHandler}
         onDelete={CardDeleteHandler}
@@ -55,8 +79,12 @@ export const RightPanel = () => {
           title={content.title}
           date="15-12-2025"
           tags={content.tag}
+          link={content.link}
         /> ))}
       </div>
+      </div>
+        </div>
+       )}
     </div>
   );
 };

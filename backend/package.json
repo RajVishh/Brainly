@@ -21,13 +21,16 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@types/express": "^5.0.4",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "googleapis": "^169.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.2",
-    "tsc": "^2.0.4"
+    "tsc": "^2.0.4",
+    "youtubei.js": "^16.0.1"
   }
 }

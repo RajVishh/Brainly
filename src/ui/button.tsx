@@ -7,10 +7,11 @@ const buttonVariants = cva("text-center py-1 px-2 rounded-md font-medium cursor-
     variant: {
       primary: "bg-[#4A44DA] text-white hover:bg-[#7A77E4] trasnition duration-400",
       secondary: "bg-[#E0E3FF] text-[#4A44DA] hover:bg-black",
+      tertiary: "bg-white bg-[#F7F9FB] text-center border-[#E0E3FF] hover:bg-[#E0E3FF] trasnition duration-400 border-1 rounded-[200px]"
     },
     size: {
       md: "h-8 px-3 text-sm",
-      sm: "h-10 px-4 py-2 text-base",
+      sm: "h-7 px-2 mt-2 text-sm",
       lg: "h-12 px-6 text-lg",
     },
   },
@@ -37,7 +38,7 @@ export const Button = ({
   ...props 
 }: buttonProps) => {
   return (
-    <button onClick={onClick}
+    <button type="submit" onClick={onClick}
       className={twMerge(buttonVariants({variant, size }), className)}
       {...props}
     ><div className="flex gap-2"><span>{startIcon}</span>{children}

@@ -1,6 +1,10 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { type ReactElement } from "react";
 import { twMerge } from "tailwind-merge";
+import {getYouTubeVideoId} from "../utils/fetchThumbnails.ts"
+import { Button } from "../ui/button";
+import {summarize} from '../utils/summarize.ts'
+import axios from "axios"
 
 const CardVariants = cva("bg-white rounded-md", {
   variants: {
@@ -26,12 +30,14 @@ interface CardProps extends VariantProps<typeof CardVariants> {
   firstRightIcon?: ReactElement;
   secondRightIcon?: ReactElement;
   className?: string;
-  onShare:()=>void
-  onDelete:()=>void
+  onShare?:()=>void;
+  onDelete?:()=>void;
+  link: string
 }
 
 export const Card = ({
   title,
+  link,
   variant,
   tags,
   size,
@@ -40,6 +46,16 @@ export const Card = ({
   onShare,
   onDelete
 }: CardProps) => {
+  console.log(link)
+  const videoId = getYouTubeVideoId(link);
+
+  async function handleClick() {
+
+    summarize(link)
+    
+  }
+
+
   return (
     <div className={twMerge(CardVariants({ variant, size }))}>
       <div className="flex justify-between">
@@ -48,8 +64,19 @@ export const Card = ({
           <span onClick={onShare} className="cursor-pointer">{firstRightIcon}</span>
           <span onClick={onDelete} className="cursor-pointer">{secondRightIcon}</span>
         </div>
+        
       </div>
+      <div><img className = "rounded-md border-1 mt-5 border-[#C9C8C7]"
+          src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+          alt="YouTube thumbnail"
+          
+        /></div>
       <div>{tags}</div>
-    </div>
+      <Button
+          variant="tertiary"
+          size="sm"
+          children="Summarize"
+          onClick={handleClick}
+        /></div>
   );
 };

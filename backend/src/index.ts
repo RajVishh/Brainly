@@ -2,11 +2,15 @@ import express from "express";
 import { BrainModel, UserModel,LinkModel } from "./db.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createBrain, userSignInMiddlware } from "./middlewares/signinMiddleware.js";
+import { createBrain, UserBrainMiddlware, userSignInMiddlware } from "./middlewares/signinMiddleware.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
-import {randomHash} from "./utils/randomHash.ts"
+import {randomHash} from "./utils/randomHash.js"
+import { YoutubeTranscript } from 'youtube-transcript';
+import {getTranscript} from "./utils/getTranscript"
+
 const SECRET = "SDSDSDSDDS";
+
 
 const app = express();
 app.use(cookieParser());
@@ -58,10 +62,18 @@ app.post("/user/signup", async (req, res) => {
 app.post("/user/signin", userSignInMiddlware, (req, res) => {
   const UserInfo = req.userInfo;
   const UserId = UserInfo._id.toString();
-  const token = jwt.sign(UserId, SECRET);
+  const token = jwt.sign(
+  { userId: UserId },
+  SECRET,
+  { expiresIn: "7d" }
+);
 
   try{
-    res.cookie("cookie", token);
+    res.cookie("token", token, {
+  httpOnly: true,
+  sameSite: "lax",
+  path: "/",
+});
     console.log(token);
    res.json({
     UserInfo:UserInfo
@@ -72,23 +84,21 @@ app.post("/user/signin", userSignInMiddlware, (req, res) => {
   }
 });
 
-app.post("/user/content",createBrain, async (req, res) => {
+app.post("/content",createBrain, async (req, res) => {
   try {
     const link = req.body.link;
-    const type = req.body.type;
-    const tags = req.body.tags;
+    const title = req.body.title;
    const UserId = req.UserId
-    const brainCreated = await BrainModel.create({ link, type, tags, UserId });
+    const brainCreated = await BrainModel.create({title ,link, UserId });
     if (brainCreated) {
       res.json({
-        BrainCreated: brainCreated,
+        title,link
       });
     }
   } catch (err) {
     res.json({ error: err });
   }
 });
-
 
 app.get('/user/:UserId/content',async(req,res)=>{
 
@@ -133,9 +143,9 @@ app.put('/user/brain',async(req,res)=>{
 
 })
 
-app.post('/user/:UserId/brains/share',userSignInMiddlware,async(req,res)=>{
+app.post('/user/:UserId/brains/share',async(req,res)=>{
  const userId = req.params.UserId;
-  const isSharabel = req.body.isSharabel
+  const isSharabel = req.body.isSharable;
   if(!isSharabel){
     const linkDeleted = await LinkModel.deleteOne({userId:userId});
     res.json({msg:"link deleted"})
@@ -146,11 +156,14 @@ app.post('/user/:UserId/brains/share',userSignInMiddlware,async(req,res)=>{
     { randomLink:randomLink, userId:userId },
   );
       res.json({
-        msg:"link created"})
+        msg:"link created",
+        link:`http://localhost:3000/shared/${randomLink}`,
+        randomLink:randomLink
+      });
   }
 });
 
-app.get('/share/:randomlink',async(req,res)=>{
+app.get('/shared/:randomlink',async(req,res)=>{
   const randomlink = req.params.randomlink
     const user = await LinkModel.findOne({randomLink:randomlink})
     if(!user){
@@ -160,10 +173,24 @@ app.get('/share/:randomlink',async(req,res)=>{
     const UserId = user.userId
     const brains = await BrainModel.find({UserId})
       res.json({
-      msg:brains})
+      brains:brains})
     }
     
   } 
 );
+
+// app.post("/summarise", async (req,res) => {
+//   const url = req.body.url
+// console.log(url)
+//   try {
+//    const fullText =  getTranscript(url)
+//     res.json({ transcript: fullText });
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to fetch transcript' });
+//   }
+
+
+  
+// })
 
 app.listen(3000);
