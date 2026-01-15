@@ -12,13 +12,13 @@ export const SignUp = ()=>{
   const [username,setUsername] = useState();
   const navigate = useNavigate();
 
-  const handleEmailValue =(e)=>{
+  const handleEmailValue =(e: React.ChangeEvent<HTMLInputElement>)=>{
     setEmail(e.target.value)
   }
-  const handlePassValue =(e)=>{
+  const handlePassValue =(e: React.ChangeEvent<HTMLInputElement>)=>{
     setPassword(e.target.value)
   }
-  const handleUsernameValue=(e)=>{
+  const handleUsernameValue=(e: React.ChangeEvent<HTMLInputElement>)=>{
     setUsername(e.target.value)
   }
   const navigateToSignin=()=>{

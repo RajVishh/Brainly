@@ -1,4 +1,4 @@
-import { Brain,File, Tag, Link, LogOut } from 'lucide-react';
+import { Brain, File, Tag, Link, LogOut } from 'lucide-react';
 
 export const NavBar = ()=>{
         return(

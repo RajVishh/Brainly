@@ -1,7 +1,5 @@
 import {RightPanel} from "./rightPanel"
 import {NavBar} from "./NavBar"
-import axios from 'axios';
-import{useParams} from 'react-router-dom'
 
 
 export const Brain=()=> {

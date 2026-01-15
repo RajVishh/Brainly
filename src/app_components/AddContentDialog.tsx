@@ -3,23 +3,20 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "../ui/button";
 import { useState } from "react";
-import axios from "axios";
 import { useCardsStore } from "../store/useCardStore.ts";
-import { Plus, Share2 } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export const AddContentDialog = ()=>{
     const [title,setTitle] = useState("");
     const [link,setLink] = useState("");
     const addCard = useCardsStore((state) => state.addCard);
 
-    const handleTitleOnChangeValue = (e) =>{
+    const handleTitleOnChangeValue = (e: React.ChangeEvent<HTMLInputElement>) =>{
         setTitle(e.target.value)
         console.log(e.target.value)
     }
 
-  
-
-     const handleLinkOnChangeValue = (e) =>{
+    const handleLinkOnChangeValue = (e: React.ChangeEvent<HTMLInputElement>) =>{
         setLink(e.target.value)
         console.log(e.target.value)
     }

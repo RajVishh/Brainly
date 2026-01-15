@@ -1,6 +1,6 @@
 
 import { Card } from "../ui/card";
-import { Share2,Trash2 } from 'lucide-react';
+import { Share2, Trash2 } from 'lucide-react';
 import { useEffect } from "react";
 import { AddContentDialog } from "./AddContentDialog";
 import { useParams } from 'react-router-dom';

@@ -6,14 +6,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 export const SignIn = ()=>{
     const navigate = useNavigate();
-    const[email,setEmail]=useState();
-    const[password,setPassword]=useState();
+    const[email,setEmail]=useState("");
+    const[password,setPassword]=useState("");
 
-    const handleEmailValue = (e) =>{
+    const handleEmailValue = (e: React.ChangeEvent<HTMLInputElement>) =>{
             setEmail(e.target.value)
         }
 
-      const handlePasswordValue = (e) =>{
+      const handlePasswordValue = (e: React.ChangeEvent<HTMLInputElement>) =>{
             setPassword(e.target.value)
         }
 
@@ -23,8 +23,9 @@ export const SignIn = ()=>{
             const loginUser = await axios.post("http://localhost:3000/user/signin",{
                 email,password
             }, {
-                withCredentials: true  // ← ADD THIS!
+                withCredentials: true
             })
+            console.log(email,password)
             if(!loginUser.data.UserInfo){   
                 console.log("login failed")
             }else{
