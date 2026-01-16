@@ -11,22 +11,45 @@ interface Card {
 }
 
 interface CardsState {
-
+    getFilteredCards: any;
+    FilteredCardsByFilter: Card[];
+    getFilteredCardsByFilter: any;
     Cards: Card[];
     RandomLink: string;
     getCards: (UserId:string)=> Promise<void>;
     addCard: (title: string, link: string) => Promise<void>;
     getSharedCards: (randomlink:string)=> Promise<void>;
+    FilteredCards: Card[];
 
 }
 
 export const useCardsStore = create<CardsState>((set)=> ({
     Cards:[],
     RandomLink:"",
+    FilteredCards:[],
+    FilteredCardsByFilter:[],
     getCards: async(UserId)=>{
     
     const response = await axios.get(`http://localhost:3000/user/${UserId}/content`)
     set({Cards:response.data.brains})
+  },
+
+  getFilteredCardsByFilter:(filterName:string,card)=>{
+    console.log(filterName,card)
+    const filteredCards = card.filter((c:any) =>
+        c.link.toLowerCase().includes(filterName.toLowerCase())
+    );
+    set({FilteredCards:filteredCards})
+  },
+
+
+  getFilteredCards: (query:string,card)=>{
+    console.log(query,card)
+     const filteredCards = card.card.filter((c:any) =>
+        c.title.toLowerCase().includes(query.toLowerCase())
+    );
+    set({FilteredCards:filteredCards})
+    console.log("filteredCards",filteredCards)
   },
 
   getSharedCards: async(randomlink)=>{

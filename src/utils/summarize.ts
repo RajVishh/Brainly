@@ -1,8 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import * as cheerio from 'cheerio';
-import axios from "axios"
 
-const genAI = new GoogleGenerativeAI("AIzaSyAK1en2eVdIGROhICeo2bU3FgKdwUZ6ea0");
+const genAI = new GoogleGenerativeAI("AIzaSyA_VDLCWFnT_a5r5bzod0H7MNiiwHkINsc");
 
 
  export async function summarize(Link) {
@@ -23,22 +21,13 @@ const genAI = new GoogleGenerativeAI("AIzaSyAK1en2eVdIGROhICeo2bU3FgKdwUZ6ea0");
 
   console.log(result.response.text());
   }
-  else if (Link.includes("x.com") || Link.includes("X.COM")){
+  // else if (Link.includes("x.com") || Link.includes("X.COM")){
 
 
 
-  }
+  // }
 
   else{
-    // const { data } = await axios.get(Link);
-
-    // const $ = cheerio.load(data);
-    
-    // $('script, style, nav, footer, iframe, .ad-container').remove();
-
-    // const articleText = $('article').text() || $('body').text();
-
-    // const cleanText = articleText.replace(/\s+/g, ' ').trim().slice(0, 30000);
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
@@ -53,6 +42,8 @@ const genAI = new GoogleGenerativeAI("AIzaSyAK1en2eVdIGROhICeo2bU3FgKdwUZ6ea0");
   ]);
 
   console.log(result.response.text());
+  const text = await result.response.text();
+  return text;
 
 
   }

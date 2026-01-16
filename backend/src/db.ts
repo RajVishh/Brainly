@@ -1,4 +1,4 @@
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -21,6 +21,14 @@ UserId:ObjectId
 
 })
 
+const FilterSchema = new Schema({
+
+filterName:String,
+userId:{type:ObjectId,ref:'users'}
+
+
+})
+
 const LinkSchema = new Schema({
     randomLink:{type:String,unique:true},
     userId:{type:ObjectId,ref:'users',unique:true}
@@ -30,4 +38,5 @@ const LinkSchema = new Schema({
 export const LinkModel = mongoose.model('link',LinkSchema)
 export const UserModel = mongoose.model('user',UserSchema)
 export const BrainModel = mongoose.model('brain',BrainSchema)
+export const FilterModel = mongoose.model('filter',FilterSchema)
 

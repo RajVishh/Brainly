@@ -1,13 +1,11 @@
 import express from "express";
-import { BrainModel, UserModel,LinkModel } from "./db.js";
+import { BrainModel, UserModel,LinkModel, FilterModel } from "./db.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createBrain, UserBrainMiddlware, userSignInMiddlware } from "./middlewares/signinMiddleware.js";
+import { createBrain, userSignInMiddlware } from "./middlewares/signinMiddleware.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
 import {randomHash} from "./utils/randomHash.js"
-import { YoutubeTranscript } from 'youtube-transcript';
-import {getTranscript} from "./utils/getTranscript"
 
 const SECRET = "SDSDSDSDDS";
 
@@ -60,7 +58,7 @@ app.post("/user/signup", async (req, res) => {
 });
 
 app.post("/user/signin", userSignInMiddlware, (req, res) => {
-  const UserInfo = req.userInfo;
+  const UserInfo = (req as any).userInfo;
   const UserId = UserInfo._id.toString();
   const token = jwt.sign(
   { userId: UserId },
@@ -88,7 +86,7 @@ app.post("/content",createBrain, async (req, res) => {
   try {
     const link = req.body.link;
     const title = req.body.title;
-   const UserId = req.UserId
+   const UserId = (req as any).UserId
     const brainCreated = await BrainModel.create({title ,link, UserId });
     if (brainCreated) {
       res.json({
@@ -147,12 +145,12 @@ app.post('/user/:UserId/brains/share',async(req,res)=>{
  const userId = req.params.UserId;
   const isSharabel = req.body.isSharable;
   if(!isSharabel){
-    const linkDeleted = await LinkModel.deleteOne({userId:userId});
+    await LinkModel.deleteOne({userId:userId});
     res.json({msg:"link deleted"})
   }
   else if (isSharabel){
     const randomLink = randomHash(30)
-    const createLink = await LinkModel.create(
+    await LinkModel.create(
     { randomLink:randomLink, userId:userId },
   );
       res.json({
@@ -179,18 +177,37 @@ app.get('/shared/:randomlink',async(req,res)=>{
   } 
 );
 
-// app.post("/summarise", async (req,res) => {
-//   const url = req.body.url
-// console.log(url)
-//   try {
-//    const fullText =  getTranscript(url)
-//     res.json({ transcript: fullText });
-//   } catch (error) {
-//     res.status(500).json({ error: 'Failed to fetch transcript' });
-//   }
+app.post('/:UserId/filters/addFilter',async(req,res)=>{
+    const filterName =  req.body.filterName
+    const userId = req.params.UserId
+    console.log("userId",userId)
+    const filterCreated = await FilterModel.create({filterName:filterName,userId:userId})
+    if(filterCreated){
+        res.json({msg:"filter created",
+        filter:filterCreated
+        })
+
+    }else{
+        res.json({msg:"failed to create filter"})
+    }
+})
+
+app.get('/:UserId/filters',async(req,res)=>{
+    const UserId = req.params.UserId
+    console.log("UserId in get filters:", UserId);
+    const filters = await FilterModel.find({
+      userId:UserId
+    })
+    if(filters){
+        res.json({
+        filters:filters
+        })
+
+    }else{
+        res.json({msg:"failed to get filters"})
+    }
+})
 
 
-  
-// })
 
 app.listen(3000);
